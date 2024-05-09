@@ -7,6 +7,7 @@ import fileupload from "express-fileupload";
 import mongoose from "mongoose";
 import sendResponse from "./util/send-response.js";
 import memberRoute from "./module/member/route.js";
+import fundRoute from "./module/fund/route.js";
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/member", memberRoute);
+app.use("/fund", fundRoute);
 
 app.listen(
     process.env.SERVER_PORT,
