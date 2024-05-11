@@ -20,6 +20,29 @@ export const getFundsByCurrentMonth = async (req, res) => {
     }
 }
 
+export const getFundsByMonthYearMemberid = async (req, res) => {
+    try {
+        const { memberid, month, year } = req.body;
+        let query = [];
+        if (month && year) {
+            query.push({ $expr: { $eq: [new Date("$date").getMonth + 1, month] } }, { $expr: { $eq: [new Date("$date").getFullYear, year] } });
+        }
+        if (memberid) {
+            query.push({ $expr: { $eq: ["$memberid", memberid] } });
+        }
+
+        const getFundsByMonthYearMemberidQuery = await fundModel.find({ $and: query });
+
+        if (getFundsByMonthYearMemberidQuery.length < 1) {
+            return sendResponse(res, "success", "No fund found for current condition.");
+        }
+
+        return sendResponse(res, "success", "Fund found by current condition fetched successfully.", getFundsByMonthYearMemberidQuery);
+    } catch (error) {
+        return sendResponse(res, "failed", "Fund found by current condition fetched failed.", undefined, error);
+    }
+}
+
 export const insertFund = async (req, res) => {
     try {
         const { memberid, date, fund } = req.body;
