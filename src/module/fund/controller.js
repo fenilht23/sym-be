@@ -3,6 +3,21 @@ import sendResponse from "../../util/send-response.js";
 import fundModel from "./model.js";
 import mongoose from "mongoose";
 
+export const getTotalFunds = async (req, res) => {
+    try {
+        const getTotalFundsQuery = await fundModel.aggregate([{
+            $group: {
+                _id: null,
+                totalFunds: { $sum: "$fund" }
+            }
+        }]);
+
+        return sendResponse(res, "success", "All fund fetched successfully.", getTotalFundsQuery);
+    } catch (error) {
+        return sendResponse(res, "failed", "All fund fetched failed.", undefined, error);
+    }
+}
+
 export const getFundsByCurrentMonth = async (req, res) => {
     try {
         let firstDate = moment().startOf('month').format('YYYY-MM-DD');
@@ -20,7 +35,7 @@ export const getFundsByCurrentMonth = async (req, res) => {
     }
 }
 
-export const getFundsByMonthYearMemberid = async (req, res) => {
+export const getFundsByMonthYearAndMemberid = async (req, res) => {
     try {
         const { memberid, month, year } = req.body;
         let query = [];
